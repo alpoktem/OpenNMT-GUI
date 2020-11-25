@@ -39,15 +39,14 @@ def index():
         headers = {"Content-Type": "application/json"}
         data = {"src": src_language, "tgt": tgt_language, "text": source}
         response = requests.post(url, json=data, headers=headers)
-        translation = response.text
-        print(translation)
+        translation_response = response.text
+        print(translation_response)
 
-        jsn = json.loads(translation)
-        text = jsn[0][0]['tgt']
-        text = re.sub(r" ([?.!,:،؛؟¿])", r"\1", text)
+        jsn = json.loads(translation_response)
+        translated_text = jsn['translation']
     else:
         form.pagedown.data = ('This is a very simple test.')
-    return render_template('index.html', form=form, language=language, text=text)
+    return render_template('index.html', form=form, language=language, text=translated_text)
 
 
 if __name__ == '__main__':

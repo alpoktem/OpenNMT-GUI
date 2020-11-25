@@ -25,8 +25,8 @@ class PageDownFormExample(FlaskForm):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = PageDownFormExample()
-    text = None
     language = "fr-sw" #Default
+    translated_text = ""
     if form.validate_on_submit():
         source = form.pagedown.data.lower()
         source = re.sub(r"([?.!,:;¿])", r" \1 ", source)
@@ -43,6 +43,7 @@ def index():
         print(translation_response)
 
         jsn = json.loads(translation_response)
+        print(jsn)
         translated_text = jsn['translation']
     else:
         form.pagedown.data = ('This is a very simple test.')

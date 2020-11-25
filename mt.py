@@ -14,6 +14,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 pagedown = PageDown(app)
 
+url = "http://127.0.0.1:5000/translate"
+
 
 class PageDownFormExample(FlaskForm):
     pagedown = PageDownField('Type the text you want to translate and click "Translate".')
@@ -24,16 +26,18 @@ class PageDownFormExample(FlaskForm):
 def index():
     form = PageDownFormExample()
     text = None
-    language = "en-fr" #Default
+    language = "fr-sw" #Default
     if form.validate_on_submit():
         source = form.pagedown.data.lower()
         source = re.sub(r"([?.!,:;¿])", r" \1 ", source)
         source = re.sub(r'[" "]+', " ", source)
         language = str(request.form.get('lang'))
-        if language == "fr-sw":
-            url = "http://127.0.0.1:5000/translate"
+
+        src_language = language.split("-")[0]
+        tgt_language = language.split("-")[1]
+
         headers = {"Content-Type": "application/json"}
-        data = [{"src": source, "id": 100}]
+        data = {"src": src_language, "tgt": tgt_language, "text": source}
         response = requests.post(url, json=data, headers=headers)
         translation = response.text
         print(translation)
@@ -44,8 +48,6 @@ def index():
     else:
         form.pagedown.data = ('This is a very simple test.')
     return render_template('index.html', form=form, language=language, text=text)
-
-
 
 
 if __name__ == '__main__':
